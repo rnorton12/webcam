@@ -13,6 +13,7 @@ $(document).ready(function () {
       };
       */
     var countryWithLiveWebCams = [];
+    var currentCountryObject = {};
     var currentArrayIndex = 0; // index into array of current country with live webCams
 
     // ISO 3166-1-alpha-2 - country codes
@@ -85,12 +86,12 @@ $(document).ready(function () {
         });
     }
 
-    function queryWebcamsByOffset(countryCode, index, offset, limit) {
+    function queryWebcamsByOffset(webcamObject, offset, limit) {
         //curl --get --include 'https://webcamstravel.p.mashape.com/webcams/list/continent=AF?lang=en&show=webcams%3Aimage%2Clocation' -H 'X-Mashape-Key: JPZH8HA6lBmshdutMhV7vXqrSTydp1Ov8CljsnUVWnKklt18RP'
         var key = "JPZH8HA6lBmshdutMhV7vXqrSTydp1Ov8CljsnUVWnKklt18RP";
         $.ajax({
             url: "https://webcamstravel.p.mashape.com/webcams/list/country=" +
-                countryCode +
+                webcamObject.countryCode +
                 "/property=live/limit=" +
                 limit +
                 "," +
@@ -106,9 +107,9 @@ $(document).ready(function () {
             success: function (data) {
                 console.log(data);
                 if (data.result.total) {
-                    countryWithLiveWebCams[index].webcams = [];
-                    countryWithLiveWebCams[index].webcams = data.result.webcams;
-                    renderTableDetails(countryWithLiveWebCams[index]);
+                    webcamObject.webcams = [];
+                    webcamObject.webcams = data.result.webcams;
+                    renderTableDetails(webcamObject);
                 }
             },
             error: function () {
@@ -246,13 +247,19 @@ $(document).ready(function () {
     $(document).on("click", ".country-code", function () {
         var value = $(this).attr("value");
         currentArrayIndex = value;
-        renderTableSummary(countryWithLiveWebCams[value]);
-        renderTableDetails(countryWithLiveWebCams[value]);
+        currentCountryObject.countryCode = countryWithLiveWebCams[value].countryCode;
+        currentCountryObject.countryName = countryWithLiveWebCams[value].countryName;
+        currentCountryObject.totalCams = countryWithLiveWebCams[value].totalCams;
+        currentCountryObject.webcams = [];
+        currentCountryObject.webcams = countryWithLiveWebCams[value].webcams;
+
+        renderTableSummary(currentCountryObject);
+        renderTableDetails(currentCountryObject);
     });
 
     $(document).on("click", "#back-button", function () {
         var limit = maxLimit;
-        var webcamObject = countryWithLiveWebCams[currentArrayIndex];
+       // var webcamObject = countryWithLiveWebCams[currentArrayIndex];
         var temp = myOffset - limit;
         if (myOffset !== 0) {
             if (temp < 0) {
@@ -261,22 +268,26 @@ $(document).ready(function () {
                 myOffset = temp;
             }
             console.log("myOffset: " + myOffset);
-            queryWebcamsByOffset(webcamObject.countryCode, currentArrayIndex, myOffset, limit);
+            queryWebcamsByOffset(currentCountryObject, myOffset, limit);
         }
     });
 
     $(document).on("click", "#next-button", function () {
         var limit = maxLimit;
-        var webcamObject = countryWithLiveWebCams[currentArrayIndex];
+       // var webcamObject = countryWithLiveWebCams[currentArrayIndex];
         var temp = myOffset + limit;
-        if (myOffset < webcamObject.totalCams) {
-            if (temp > webcamObject.totalCams) {
-                myOffset = myOffset + (webcamObject.totalCams - myOffset);
+        if (myOffset < currentCountryObject.totalCams) {
+            if (temp > currentCountryObject.totalCams) {
+                myOffset = myOffset + (currentCountryObject.totalCams - myOffset);
             } else {
                 myOffset = myOffset + maxLimit;
             }
             console.log("myOffset: " + myOffset);
-            queryWebcamsByOffset(webcamObject.countryCode, currentArrayIndex, myOffset, limit);
+            queryWebcamsByOffset(currentCountryObject, myOffset, limit);
         }
+    });
+
+    $(document).on("click", "#embed-video", function () {
+        $("#embedded-video").append('<a name="lkr-timelapse-player" data-id="1508099376" data-play="live" href="https://lookr.com/1508099376" target="_blank">Szentendre › North-West</a><script async type="text/javascript" src="https://api.lookr.com/embed/script/player.js"></script>');
     });
 });
