@@ -295,18 +295,19 @@ $(document).ready(function () {
         var value = $(this).attr("value");
         var $video = $("<a>");
         $video.attr("href", "https://lookr.com/" + value);
-        $video.attr("name", "lkr-timelapse-player");
+ //       
+        $video.attr("id", "lkr-timelapse-player");
         $video.attr("data-id", value);
         $video.attr("data-play", "live");
 //        $video.attr("target", "_blank");
         $video.text("Webcam Footage");
 
-        var $script = $("<script>");
-        $script.attr("aysnc");
-        $script.attr("type", "text/javascript");
-        $script.attr("src", "https://api.lookr.com/embed/script/player.js");
+//        var $script = $("<script>");
+////        $script.attr("async");
+//        $script.attr("type", "text/javascript");
+//        $script.attr("src", "https://api.lookr.com/embed/script/player.js");
         
-        $video.append($script);
+ //       $video.append($script);
         //https://tutorialehtml.com/en/html-tutorial-embed-video/
       //  <a name="lkr-timelapse-player" data-id="1118660406" data-play="live" href="https://lookr.com/1118660406" target="_blank">Martigny-Ville: Place Centrale de Martigny</a><script async type="text/javascript" src="https://api.lookr.com/embed/script/player.js"></script>
         $("#embedded-video").empty();
