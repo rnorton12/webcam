@@ -47,7 +47,7 @@ $(document).ready(function () {
 
     // curl --get --include 'https://webcamstravel.p.mashape.com/webcams/list/category=beach?lang=en&show=webcams%3Aimage%2Clocation' -H 'X-Mashape-Key: JPZH8HA6lBmshdutMhV7vXqrSTydp1Ov8CljsnUVWnKklt18RP'
     function queryWebCamsByCountry(countryObject, limit) {
-        //curl --get --include 'https://webcamstravel.p.mashape.com/webcams/list/continent=AF?lang=en&show=webcams%3Aimage%2Clocation' -H 'X-Mashape-Key: JPZH8HA6lBmshdutMhV7vXqrSTydp1Ov8CljsnUVWnKklt18RP'
+        //curl --get --include 'https://webcamstravel.p.mashape.com/webcams/list/continent=AF?lang=en&show=webcams:player%3Aimage%2Clocation' -H 'X-Mashape-Key: JPZH8HA6lBmshdutMhV7vXqrSTydp1Ov8CljsnUVWnKklt18RP'
         var key = "JPZH8HA6lBmshdutMhV7vXqrSTydp1Ov8CljsnUVWnKklt18RP";
         $.ajax({
             url: "https://webcamstravel.p.mashape.com/webcams/list/country=" +
@@ -55,7 +55,7 @@ $(document).ready(function () {
                 "/property=live/limit=" +
                 limit +
                 ",0" + // offset
-                "?lang=en&show=webcams%3Aimage%2Clocation%2Curl",
+                "?lang=en&show=webcams%3Aimage%2Clocation%2Curl%2Cplayer",
 
             headers: {
                 "X-Mashape-Key": key
@@ -64,8 +64,9 @@ $(document).ready(function () {
             dataType: "json",
             processData: false,
             success: function (data) {
-                console.log(data);
+
                 if (data.result.total) {
+                    console.log(data);
                     var liveWebCams = {
                         countryCode: "",
                         countryName: "",
@@ -96,7 +97,7 @@ $(document).ready(function () {
                 limit +
                 "," +
                 offset +
-                "?lang=en&show=webcams%3Aimage%2Clocation%2Curl",
+                "?lang=en&show=webcams%3Aimage%2Clocation%2Curl%2Cplayer",
 
             headers: {
                 "X-Mashape-Key": key
@@ -105,8 +106,9 @@ $(document).ready(function () {
             dataType: "json",
             processData: false,
             success: function (data) {
-                console.log(data);
+
                 if (data.result.total) {
+                    console.log(data);
                     webcamObject.webcams = [];
                     webcamObject.webcams = data.result.webcams;
                     renderTableDetails(webcamObject);
@@ -220,15 +222,33 @@ $(document).ready(function () {
             $tableCol7.text(webcamObject.webcams[i].location.longitude);
 
             var $tableCol8 = $("<td>");
-            var $button = $("<button>");
-            // set the class
-            $button.addClass("btn btn-primary view-webcam m-1");
-            $button.attr("type", "button");
-            // Adding a data-attribute
-            $button.attr("value", webcamObject.webcams[i].id);
-            // Providing the initial button text
-            $button.text("View Webcam");
-            $tableCol8.append($button);
+            if (webcamObject.webcams[i].player.live.available) {
+                var $button = $("<button>");
+                // set the class
+                $button.addClass("btn btn-primary view-webcam m-1");
+                $button.attr("id", "live-webcam");
+                $button.attr("type", "button");
+                // Adding a data-attribute
+                $button.attr("value", webcamObject.webcams[i].id);
+                $button.attr("name", webcamObject.webcams[i].title);
+                // Providing the initial button text
+                $button.text("Live");
+                $tableCol8.append($button);
+            }
+
+            if (webcamObject.webcams[i].player.day.available) {
+                var $button = $("<button>");
+                // set the class
+                $button.addClass("btn btn-primary m-1");
+                $button.attr("id", "day-webcam");
+                $button.attr("type", "button");
+                // Adding a data-attribute
+                $button.attr("value", webcamObject.webcams[i].id);
+                $button.attr("name", webcamObject.webcams[i].title);
+                // Providing the initial button text
+                $button.text("Day");
+                $tableCol8.append($button);
+            }
 
             $tableRow.append($tableCol1);
             $tableRow.append($tableCol2);
@@ -245,6 +265,19 @@ $(document).ready(function () {
         $("#table-details").empty();
         $("#table-details").append($table);
     }
+
+    function getWebcamById(id) {
+        var webcamObject = undefined;
+
+        for (var i = 0; i < currentCountryObject.webcams.length; i++) {
+            if (currentCountryObject.webcams[i].id === id) {
+                webcamObject = currentCountryObject.webcams[i];
+                break;
+            }
+        }
+        return webcamObject;
+    }
+
     getCountryCodes();
 
     // Adding a click event listener to all elements with a class of "animal"
@@ -291,27 +324,51 @@ $(document).ready(function () {
         }
     });
 
-    $(document).on("click", ".view-webcam", function () {
-        var value = $(this).attr("value");
-        var $video = $("<a>");
-        $video.attr("href", "https://lookr.com/" + value);
- //       
-        $video.attr("id", "lkr-timelapse-player");
-        $video.attr("data-id", value);
-        $video.attr("data-play", "live");
-//        $video.attr("target", "_blank");
-        $video.text("Webcam Footage");
+    $(document).on("click", "#live-webcam", function () {
+        var index = $(this).attr("value");
+        var webCamId = $(this).attr("value");
+        var webCamTitle = $(this).attr("name");
+        var webCamObject = getWebcamById(webCamId);
 
-//        var $script = $("<script>");
-////        $script.attr("async");
-//        $script.attr("type", "text/javascript");
-//        $script.attr("src", "https://api.lookr.com/embed/script/player.js");
-        
- //       $video.append($script);
-        //https://tutorialehtml.com/en/html-tutorial-embed-video/
-      //  <a name="lkr-timelapse-player" data-id="1118660406" data-play="live" href="https://lookr.com/1118660406" target="_blank">Martigny-Ville: Place Centrale de Martigny</a><script async type="text/javascript" src="https://api.lookr.com/embed/script/player.js"></script>
-        $("#embedded-video").empty();
-        $("#embedded-video").append($video);
+        if (webCamObject !== undefined) {
+            // sample: <a name="lkr-timelapse-player" data-id="1010244116" data-play="live" href="https://lookr.com/1010244116" target="_blank">Lausanne › South-East: Place de la Palud</a><script async type="text/javascript" src="https://api.lookr.com/embed/script/player.js"></script>
+            var $webCam = $("<a>");
+            $webCam.attr("name", "lkr-timelapse-player");
+            $webCam.attr("data-id", webCamId);
+            $webCam.attr("data-play", "live");
+            $webCam.attr("href", webCamObject.player.live.embed);
+            $webCam.attr("target", "_blank");
+            $webCam.text(webCamTitle);
+
+            $("#embedded-video").empty();
+            $("#embedded-video").append($webCam);
+            $("#embedded-video").append('<script async type="text/javascript" src="https://api.lookr.com/embed/script/player.js"></script>');
+        }
+    });
+
+　
+    $(document).on("click", "#day-webcam", function () {
+        var index = $(this).attr("value");
+        var webCamId = $(this).attr("value");
+        var webCamTitle = $(this).attr("name");
+        var webCamObject = getWebcamById(webCamId);
+
+        if (webCamObject !== undefined) {
+            // sample: <a name="lkr-timelapse-player" data-id="1381307807" data-play="day" href="https://lookr.com/1381307807" target="_blank">Pieksämäki: Pieksämäen asemanseutua</a><script async type="text/javascript" src="https://api.lookr.com/embed/script/player.js"></script>
+            var $webCam = $("<a>");
+            $webCam.attr("name", "lkr-timelapse-player");
+            $webCam.attr("data-id", webCamId);
+            $webCam.attr("data-play", "day");
+            $webCam.attr("href", webCamObject.player.day.embed + "?autoplay=1");
+            $webCam.attr("target", "_blank");
+            $webCam.text(webCamTitle);
+
+            $("#embedded-video").empty();
+            $("#embedded-video").append($webCam);
+            $("#embedded-video").append('<script async type="text/javascript" src="https://api.lookr.com/embed/script/player.js"></script>');
+        }
     });
 
 });
+
+　
