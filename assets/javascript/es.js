@@ -16,6 +16,17 @@ $(document).ready(function () {
     var currentCountryObject = {};
     var currentArrayIndex = 0; // index into array of current country with live webCams
 
+    var map;
+    function initMap(lat, lng) {
+        console.log("here");
+        var mapDiv = document.getElementById('map');
+        console.log(mapDiv);
+        map = new google.maps.Map(mapDiv, {
+            center: {lat: lat, lng: lng},
+            zoom: 8
+        });
+    }
+
     // ISO 3166-1-alpha-2 - country codes
     function getCountryCodes() {
         var offset = myOffset;
@@ -216,7 +227,12 @@ $(document).ready(function () {
             $tableCol5.text(webcamObject.webcams[i].location.city);
 
             var $tableCol6 = $("<td>");
-            $tableCol6.text(webcamObject.webcams[i].location.latitude);
+            var $mapImage = $("<div>");
+            $mapImage.attr("id", "map");
+
+            $tableCol6.append($mapImage);
+
+           // $tableCol6.text(webcamObject.webcams[i].location.latitude);
 
             var $tableCol7 = $("<td>");
             $tableCol7.text(webcamObject.webcams[i].location.longitude);
@@ -259,6 +275,7 @@ $(document).ready(function () {
             $tableRow.append($tableCol7);
             $tableRow.append($tableCol8);
             $table.append($tableRow);
+            initMap(webcamObject.webcams[i].location.latitude, webcamObject.webcams[i].location.longitude);
         }
 
 　
