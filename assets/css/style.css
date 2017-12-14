@@ -13,3 +13,8 @@ td, th {
 tr:nth-child(even) {
   background-color: #dddddd;
 }
+
+.map-image
+{
+    height: 100%;
+}
