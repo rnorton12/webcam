@@ -1,0 +1,34 @@
+Introduction:
+I represent the project lead for the team. Have you ever just sat and watched people go 
+about their business and somehow find it stimulating.  That's how we invented Modern 
+Voyeur.  What better way is there to do this than from your own home using todays 
+technology to view live web cameras placed throughout the world.
+We have four team members including myself.  They are Ernie, David and Kelly.  After my 
+introduction each will spend sometime describing their contributions to the project.  
+And then we will followup with a short demonstration of the application.
+We divided up the tasks by personal interests and experience.  For myself I wanted to 
+be involved in the backend development.  Kelly and Ernie chose to work together on the 
+Frontend.  And David contributed to both sides.
+For the backend we used an api to retrieve web camaras and another api to retrieve the 
+country codes to pass into the web camera api. And for our new technology we chose 
+Google Maps Javascript API for displaying the location of the webcam.
+And for user input validation we restrain the user within the bounds that we have 
+chosen.
+I'll now introduce Ernie to share his contributions.
+Ernie can describe the bootstrap elements he used such as Navbar with dropdown menu to 
+select the country to get a list of its webcams.  And by the way countries made 
+available for selection have been filtered down to only those countries that have live 
+webcams.  I implemented another dropdown selection menu that lists recommended webcams 
+to view by theme.  I used the popover element within bootstrap to display the 
+applications instructions.  And finally I utilized the bootstrap grid system for 
+positioning items on the page.
+Turn it over to David to share his contributions.
+I assisted with both the front end and back end.  For the back end I researched the 
+Google Maps JavaScript API.  On the Frontend I assisted with the page styling such as 
+rounding the corners of tables that show details for each webcam.  I developed a draft 
+for the user instructions.
+Turn it over to Kelly to share her contributions.
+I came of with the title of our project "Modern Voyeur".  I finalized the user 
+instructions.  And I selected the recommended camera themes and the recommended webcams 
+for each theme.
+Then Kelly will proceed with a demonstration of our application.
